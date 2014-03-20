@@ -7,7 +7,7 @@
             model="account_fstr.category"
             name="account_fstr.report"
             rml="account_fstr/reports/account_fstr_report.rml"
-            header="True"
+            header="False"
             multi="True"
             /> 
 

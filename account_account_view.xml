@@ -8,10 +8,17 @@
             <field name="type">form</field>
             <field name="inherit_id" ref="account.view_account_form" />
             <field name="arch" type="xml">
-                <xpath expr='//page[@string="Notes"]' position="before">
-                    <page string="Reporting categories">
-                        <field name="category_ids" colspan="6" nolabel="1" domain="[('state', '=', 'normal')]" attrs="{'invisible': [('type', '=', 'view')]}" on_change="test_category_list(category_ids)"/>
-                    </page>
+                <xpath expr='//label[@for="note"]' position="replace"></xpath>
+                <xpath expr='//field[@name="note"]' position="replace">
+                    <notebook>
+	                    <page string="Notes">
+	                       <label for="note"/>
+	                       <field name="note" />
+	                    </page>
+	                    <page string="Reporting categories">
+	                        <field name="category_ids" colspan="6" nolabel="1" domain="[('state', '=', 'normal')]" attrs="{'invisible': [('type', '=', 'view')]}" on_change="test_category_list(category_ids)"/>
+	                    </page>
+                    </notebook>
                 </xpath>
             </field>
         </record>

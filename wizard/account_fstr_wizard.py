@@ -19,6 +19,7 @@
 ##############################################################################
 
 from osv import fields, osv
+from openerp.tools.translate import _
 
 class account_fstr_wizard(osv.osv_memory):
 
@@ -26,16 +27,16 @@ class account_fstr_wizard(osv.osv_memory):
     _description = "Template Print/Preview"
     _columns = {
         'fiscalyear': fields.many2one('account.fiscalyear', \
-                                    'Fiscal year',  \
-                                    help = 'Keep empty for all open fiscal years'),
-        'period_from': fields.many2one('account.period', 'Start period'),
-        'period_to': fields.many2one('account.period', 'End period'),
-        'target_move': fields.selection([('posted', 'All Posted Entries'),
-                                         ('all', 'All Entries'),
-                                        ], 'Target Moves', required = True),
-        'root_node': fields.many2one('account_fstr.category', 'Root node', required=True,),
-        'hide_zero': fields.boolean('Hide accounts with a zero balance'),
-        'ignore_special': fields.boolean('Ignore Special Periods'),
+                                    _('Fiscal year'), \
+                                    help=_('Keep empty for all open fiscal years')),
+        'period_from': fields.many2one('account.period', _('Start period')),
+        'period_to': fields.many2one('account.period', _('End period')),
+        'target_move': fields.selection([('posted', _('All Posted Entries')),
+                                         ('all', _('All Entries')),
+                                        ], _('Target Moves'), required=True),
+        'root_node': fields.many2one('account_fstr.category', _('Root node'), required=True,),
+        'hide_zero': fields.boolean(_('Hide accounts with a zero balance')),
+        'ignore_special': fields.boolean(_('Ignore Special Periods')),
     }
 
     def default_get(self, cr, uid, fields, context={}):

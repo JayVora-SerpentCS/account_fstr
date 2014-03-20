@@ -55,34 +55,11 @@ class account_fstr_report(report_sxw.rml_parse, common_report_header):
         category_obj = self.category_pool.browse(cr, uid, category_id, context=context)
         name = category_obj.name
         result = [self._get_statement(cr, uid, ids, [], self._get_root_id(), -1, context=context), self._get_root_id().balance]
-        result = self._digits_rounding(cr, uid, ids, result, context=context)
         return {
             'name': name,
             'statements': result,
             'lang': context['lang'],
         }
-    def _digits_rounding(self, cr, uid, ids, statements, context={}):
-        digits_round = self.root_node_obj.digits_round
-        statements[1] = self._account_round(statements[1], digits_round)
-        for statement_id in range(len(statements[0])):
-            statements[0][statement_id]['total_amount'] = self._account_round(statements[0][statement_id]['total_amount'], digits_round)
-        return statements
-
-    def _account_round(self, number, digits_round):
-        if number == ' ':
-            return number
-        if number == None:
-            return ' '
-        number = (round(float(number), 2-digits_round))
-        if digits_round <= 2:
-            format_string = "%%.%if" % (2 - digits_round, )
-        elif digits_round > 2:
-            number = int(number/(10**(digits_round-2)))
-            format_string = "%i"
-        result = groupe_digits(format_string % number)
-        if result == "-0":
-            result = "0"
-        return result
 
     def _get_statement(self, cr, uid, ids, statements_list, category_obj, parent_indent, context={}):
         indent = category_obj.indent_title + parent_indent

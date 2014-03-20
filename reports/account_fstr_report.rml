@@ -84,7 +84,7 @@
     <images/>
   </stylesheet>
   <story>
-    <para style="P7"> [[ setLang([[ template_data['lang']) ]] [[ template_data['name'] ]]</para>
+    <para style="P7"> [[ setLang(template_data['lang']) ]] [[ template_data['name'] ]]</para>
     <blockTable colWidths="255.0,255.0" repeatRows="1">
       <tr>
         <td>
@@ -120,7 +120,7 @@
         <td>
           <para style="P5">
               [[ setTag('para', 'para', {'leftIndent': "%s" % (o['indent'],), 'fontName': o['font_name'],}) ]]
-              [[ o['total_amount'] ]]
+              [[ formatLang(o['total_amount']) ]]
           </para>
           <para style="P5l">
               [[ setTag('para', 'para', {'spaceAfter': "%s" % (o['bottom_spacing'],),}) ]]
