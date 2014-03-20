@@ -20,12 +20,11 @@
                         <field name="ignore_special"/>
 
                     </group>
-                    <separator string="" colspan="4"/>
-                    <group colspan="4" col="6">
-                        <button icon="gtk-cancel" special="cancel" string="Cancel"/>
-                        <button icon="terp-gtk-go-back-rtl" string="Preview" name="open_window" type="object"/>
-                        <button icon="gtk-print" string="Print" name="print_template" type="object"/>
-                    </group>
+	                <footer>
+	                    <button name="print_template" string="Print" type="object" default_focus="1" class="oe_highlight"/>
+	                    or 
+	                    <button string="Cancel" class="oe_link" special="cancel" />
+	                </footer>
                 </form>
             </field>
         </record>

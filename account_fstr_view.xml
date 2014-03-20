@@ -82,9 +82,8 @@
                         </page>
 
                         <page string="Accounts">
-                        <separator colspan="4"/>
-                        <field name="account_ids" colspan="4" attrs="{'invisible':[('state','!=','normal')]}" domain="[('type', '!=', 'view')]" on_change="test_account_list(progenitor_id, account_ids)" nolabel="1"/>
-
+                            <separator colspan="4"/>
+                            <field name="account_ids" colspan="4" attrs="{'invisible':[('state','!=','normal')]}" domain="[('type', '!=', 'view')]" on_change="test_account_list(progenitor_id, account_ids)" nolabel="1"/>
                         </page>
 
                      </notebook>
