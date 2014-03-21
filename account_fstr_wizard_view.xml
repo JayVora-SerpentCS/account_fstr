@@ -6,7 +6,7 @@
             <field name="model">account_fstr.wizard</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-                <form string="Account charts">
+                <form string="Account charts" version="7.0">
                     <group colspan="4">
                         <field name="fiscalyear" on_change="onchange_fiscalyear(fiscalyear)" widget="selection"/>
                         <field name="target_move"/>

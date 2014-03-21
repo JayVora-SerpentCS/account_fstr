@@ -67,7 +67,6 @@
                         <field name="company_id" colspan="2"/>
                         <field name="parent_id" colspan="2"/>
                         <field name="progenitor_id" colspan="2" invisible="True"/>
-                        <field name="digits_round" colspan="2"/>
                         <field name="state"/>
                         <field name="sequence"/>
                         <field name="inversed_sign" colspan="1"/>
@@ -94,28 +93,22 @@
         <record id="view_account_fstr_category_tree" model="ir.ui.view">
             <field name="name">account_fstr.category.tree</field>
             <field name="model">account_fstr.category</field>
-            <field name="type">tree</field>
             <field name="field_parent">child_id</field>
             <field name="arch" type="xml">
-                <tree colors="ForestGreen:state=='root';blue:state=='view'" string="Financial Statement category" toolbar="1">
-                    <button icon="gtk-print" string="Print/Preview" name="391" type="action" states="root"/>
-                    <field name="name" select="1"/>
+                <tree colors="ForestGreen:state=='root';blue:state=='view';black:state=='normal'" string="Financial Statement category" toolbar="1">
+                    <field name="name" />
                     <field name="balance"/>
-                    <field name="progenitor_id" select="1"/>
-                    <field name="parent_id" select="1"/>
+                    <field name="progenitor_id" />
+                    <field name="parent_id"  />
                     <field name="state"/>
                     <field name="account_ids"/>
                  </tree>
             </field>
         </record>
 
-
-
         <record id="action_account_fstr_category_tree" model="ir.actions.act_window">
             <field name="name">Financial Statement category</field>
-            <field name="type">ir.actions.act_window</field>
             <field name="res_model">account_fstr.category</field>
-            <field name="view_mode">tree</field>
             <field name="view_type">tree</field>
             <field name="view_id" ref="view_account_fstr_category_tree"/>
             <field name="domain">[('parent_id','=',False)]</field>

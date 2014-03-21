@@ -90,7 +90,10 @@ class account_fstr_category(osv.osv):
         'top_spacing_end': fields.integer('Top spacing End, (pt)'),
         'bottom_spacing_title': fields.integer('Bottom spacing Title, (pt)'),
         'bottom_spacing_end': fields.integer('Bottom spacing End, (pt)'),
-        'state': fields.selection([('view','View'),('root','Root'),('normal','Normal')], 'Type', select=True,),
+        'state': fields.selection([('view', 'View'),
+                                   ('root', 'Root'),
+                                   ('normal', 'Normal')],
+                                  'Type', select=True,),
         'balance': fields.function(__compute, digits_compute=dp.get_precision('Account'), method=True, string='Balance', store=False, type='float'),
         'printable': fields.boolean('Printable', help="Select to allow category to display in print list"),
         'progenitor_id': fields.function(_get_progenitor_id, method=True,
@@ -143,9 +146,6 @@ class account_fstr_category(osv.osv):
 
     def view_exception_accounts(self, cr, uid, ids, context={}):
         account_list = self._get_selected_accounts(cr, uid, ids[0], ids, context=context)
-        model_data_pool = self.pool.get('ir.model.data')
-        model_data_ids = model_data_pool.search(cr, uid,[('model','=','ir.ui.view'),('name','=','view_account_list')], context=context)
-        resource_id = model_data_pool.read(cr, uid, model_data_ids, fields=['res_id'], context=context)[0]['res_id']
         return {
             'name': "Exception Accounts",
             'view_mode': 'tree,form',

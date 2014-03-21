@@ -20,10 +20,9 @@
 ##############################################################################
 
 import time
-from report import report_sxw
-import pooler
+from openerp.report import report_sxw
+from openerp import pooler
 from account.report.common_report_header import common_report_header
-from sm_kit import groupe_digits
 
 
 class account_fstr_report(report_sxw.rml_parse, common_report_header):
@@ -42,7 +41,6 @@ class account_fstr_report(report_sxw.rml_parse, common_report_header):
             'time': time,
             'template_data':  self._get_template_data(cr, uid, ids, [], self.root_node_obj.id,  context=context),
             'date_end': '',
-            'digits_round': '0'*(self.root_node_obj.digits_round - 2)
         })
 
     def _get_root_id(self):
@@ -115,7 +113,7 @@ class account_fstr_report(report_sxw.rml_parse, common_report_header):
             total_amount = category_obj.balance
             if category_obj.inversed_sign:
                 total_amount = -total_amount
-        # Categroy Title
+        # Category Title
         if category_obj.display_heading:
             statements_list.append({
                 'name': category_obj.name,
@@ -142,4 +140,5 @@ class account_fstr_report(report_sxw.rml_parse, common_report_header):
         return statements_list
 
 report_sxw.report_sxw('report.account_fstr.report', 'account_fstr.category',
-                      'addons/account_fstr/reports/account_fstr_report.rml', parser=account_fstr_report, header="True")
+                      'addons/account_fstr/reports/account_fstr_report.rml',
+                      parser=account_fstr_report, header="False")
