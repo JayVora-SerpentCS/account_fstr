@@ -21,7 +21,7 @@
 #
 ##############################################################################
 
-from osv import fields, osv
+from openerp.osv import fields, osv
 import decimal_precision as dp
 from wizard import account_fstr_wizard
 

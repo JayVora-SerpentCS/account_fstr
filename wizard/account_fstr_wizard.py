@@ -18,7 +18,7 @@
 #
 ##############################################################################
 
-from osv import fields, osv
+from openerp.osv import fields, osv
 from openerp.tools.translate import _
 
 class account_fstr_wizard(osv.osv_memory):
@@ -106,8 +106,9 @@ class account_fstr_wizard(osv.osv_memory):
         for category in self.browse(cr, uid, ids, context=context):
             if category.period_from and category.period_to:
                 context['periods'] = period_obj.build_ctx_periods(cr, uid, category.period_from.id, category.period_to.id)
-            datas['context'] = str({'fiscalyear': category.fiscalyear.id, 'periods': datas['periods'], \
-                                        'state': category.target_move})
+            datas['context'] = str({'fiscalyear': category.fiscalyear.id,
+                                    'periods': datas['periods'],
+                                    'state': category.target_move})
         # ignore closing periods if user ticks box in wizard
             if category.ignore_special:
                 for period in context['periods']:
