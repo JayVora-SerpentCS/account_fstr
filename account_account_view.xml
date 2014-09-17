@@ -5,7 +5,6 @@
         <record id="view_account_form" model="ir.ui.view">
             <field name="name">account.account.form</field>
             <field name="model">account.account</field>
-            <field name="type">form</field>
             <field name="inherit_id" ref="account.view_account_form" />
             <field name="arch" type="xml">
                 <xpath expr='//label[@for="note"]' position="replace"></xpath>
@@ -16,7 +15,10 @@
 	                       <field name="note" />
 	                    </page>
 	                    <page string="Reporting categories">
-	                        <field name="category_ids" colspan="6" nolabel="1" domain="[('state', '=', 'normal')]" attrs="{'invisible': [('type', '=', 'view')]}" on_change="test_category_list(category_ids)"/>
+	                        <field name="category_ids" colspan="6" nolabel="1" 
+	                               domain="[('state', '=', 'normal')]" 
+	                               attrs="{'invisible': [('type', '=', 'view')]}" 
+	                               on_change="test_category_list(category_ids)"/>
 	                    </page>
                     </notebook>
                 </xpath>

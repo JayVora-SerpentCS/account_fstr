@@ -7,85 +7,101 @@
         <record id="view_account_fstr_category_search" model="ir.ui.view">
             <field name="name">view.account_fstr.category.search</field>
             <field name="model">account_fstr.category</field>
-            <field name="type">search</field>
             <field name="arch" type="xml">
                 <search string="Search Categories">
                     <group col="10" colspan="4">
-                    <field name="name"/>
-                    <field name="parent_id"/>
-                    <field name="progenitor_id" select="1"/>
+	                    <field name="name"/>
+	                    <field name="parent_id"/>
+	                    <field name="progenitor_id" select="1"/>
                     </group>
                     <group expand="1" string="Group By...">
-                        <filter string="Parent" name="fparent" icon="terp-personal" domain="[]" context="{'group_by':'parent_id'}"/>
-                        <filter string="Temlate" name="ftemplate" icon="terp-personal" domain="[]" context="{'group_by':'progenitor_id'}"/>
+                        <filter string="Parent" name="fparent" icon="terp-personal" 
+                                domain="[]" context="{'group_by':'parent_id'}"/>
+                        <filter string="Temlate" name="ftemplate" icon="terp-personal" 
+                                domain="[]" context="{'group_by':'progenitor_id'}"/>
                     </group>
                 </search>
             </field>
         </record>
+        
+        
 
         <record id="view_account_fstr_category_form" model="ir.ui.view">
             <field name="name">account_fstr.category.form</field>
             <field name="model">account_fstr.category</field>
-            <field name="type">form</field>
             <field name="arch" type="xml">
-                <form string="Financial Statement category" col="4">
-                    <separator string="Main" colspan="4"/>
-                    <field name="name" colspan="4"/>
-                    <newline/>
-                    <notebook colspan="4">
-                    <page string="Configuration">
-                        <separator string="Category Title" colspan="4"/>
-                        <group colspan="2">
-                            <field name="display_heading" colspan="1"/>
-                            <field name="bold_title" colspan="1"/>
-                            <field name="italic_title" colspan="1"/>
-                            <field name="underline_title" colspan="1"/>
-                        </group>
-
-                        <group colspan="2" string="Spacing">
-                            <field name="indent_title"/>
-                            <field name="top_spacing_title"/>
-                            <field name="bottom_spacing_title"/>
-                        </group>
-
-                        <separator string="Category End/Total" colspan="4"/>
-                        <field name="name_end" colspan="4"/>
-                        <group colspan="2">
-                            <field name="display_total" colspan="1"/>
-                            <field name="bold_end" colspan="1"/>
-                            <field name="italic_end" colspan="1"/>
-                            <field name="underline_end" colspan="1"/>
-                            <field name="consolidate_total" colspan="1"/>
-                        </group>
-                        <group colspan="2" string="Spacing">
-                            <field name="indent_end"/>
-                            <field name="top_spacing_end"/>
-                            <field name="bottom_spacing_end"/>
-                        </group>
-
-                        <separator string="Settings" colspan="4"/>
-                        <field name="company_id" colspan="2"/>
-                        <field name="parent_id" colspan="2"/>
-                        <field name="progenitor_id" colspan="2" invisible="True"/>
-                        <field name="state"/>
-                        <field name="sequence"/>
-                        <field name="inversed_sign" colspan="1"/>
-
-                        <group colspan="2" string="Print Options">
-                            <field name="printable"/>
-                        </group>
-                        <group colspan="4" col="6">
-                            <button icon="gtk-print" string="Print/Preview" name="%(action_account_fstr_wizard)d" type="action" states="root"/>
-                            <button icon="gtk-find" string="Exception accounts" name="view_exception_accounts" type="object" states="root"/>
-                        </group>
-                        </page>
-
-                        <page string="Accounts">
-                            <separator colspan="4"/>
-                            <field name="account_ids" colspan="4" attrs="{'invisible':[('state','!=','normal')]}" domain="[('type', '!=', 'view')]" on_change="test_account_list(progenitor_id, account_ids)" nolabel="1"/>
-                        </page>
-
-                     </notebook>
+                <form string="Financial Statement category" version="7.0">
+                    <header>
+                        <button icon="gtk-print" string="Print/Preview"
+                            name="%(action_account_fstr_wizard)d" type="action" states="normal" />
+                        <button icon="gtk-find" string="Exception accounts" name="view_exception_accounts"
+                            type="object" states="normal" />
+                    </header>
+                    <sheet>
+	                    <div class="oe_title">
+	                        <div class="oe_edit_only">
+	                            <label for="name"/>(
+                                <field name="printable" class="oe_inline"/> <label for="printable" string="Is Printable?"/>)
+	                        </div>
+	                        <h1>
+	                            <field name="name" default_focus="1" placeholder="Report Name"/>
+	                        </h1>
+	                        <field name="parent_id" placeholder="Parent Report" attrs="{'invisible': [('state','=', 'root')]}"/>
+	                    </div>
+                        <notebook colspan="4">
+		                    <page string="Configuration">
+		                        <group colspan="2" col="4">
+		                            <group string="Category Title" colspan="1" col="2">
+			                            <field name="display_heading" />
+			                            <field name="bold_title" />
+			                            <field name="italic_title" />
+			                            <field name="underline_title" />
+		                            </group>
+	                                <group colspan="1" col="2" string="Spacing">
+	                                    <field name="indent_title"/>
+	                                    <field name="top_spacing_title"/>
+	                                    <field name="bottom_spacing_title"/>
+	                                </group>
+		                        </group>
+		
+		                        <label string="Category End/Total" />
+		                        <field name="name_end" colspan="2" style="width: 30em"/>
+		                        <group colspan="2" col="4">
+		                            <group string="Category End/Total" colspan="1" col="2">
+			                            <field name="display_total" />
+			                            <field name="bold_end" />
+			                            <field name="italic_end" />
+			                            <field name="underline_end" />
+			                            <field name="consolidate_total" />
+			                        </group>
+			                        <group colspan="1" col="2" string="Spacing">
+			                            <field name="indent_end"/>
+			                            <field name="top_spacing_end"/>
+			                            <field name="bottom_spacing_end"/>
+			                        </group>
+			                    </group>
+		
+		                        <separator string="Settings" colspan="4"/>
+		                        <group>
+			                        <field name="company_id" style="width: 30em"/>
+			                        <field name="state" style="width: 30em"/>
+			                    </group>
+			                    <group>
+			                        <field name="progenitor_id" colspan="2" invisible="True"/>
+			                        <field name="digits_round" colspan="2" style="width: 30em" />
+			                        <field name="sequence" style="width: 30em"/>
+			                        <field name="inversed_sign" style="width: 30em"/>
+		                        </group>
+		                    </page>
+		
+		                    <page string="Accounts" attrs="{'invisible':[('state','!=','normal')]}">
+		                        <field name="account_ids" domain="[('type', '!=', 'view')]" 
+		                        <!-- TODO: Validate accounts when added to report
+		                        on_change="test_account_list(progenitor_id, account_ids)"  -->
+		                         />
+		                    </page>
+                        </notebook>
+                    </sheet>
                  </form>
             </field>
         </record>
@@ -95,20 +111,25 @@
             <field name="model">account_fstr.category</field>
             <field name="field_parent">child_id</field>
             <field name="arch" type="xml">
-                <tree colors="ForestGreen:state=='root';blue:state=='view';black:state=='normal'" string="Financial Statement category" toolbar="1">
-                    <field name="name" />
+                <tree colors="ForestGreen:state=='root';blue:state=='view';black:state=='normal'" string="Financial Statement category">
+                    <field name="name" select="1"/>
                     <field name="balance"/>
                     <field name="progenitor_id" />
                     <field name="parent_id"  />
                     <field name="state"/>
+                    <!-- TODO: Prevent display huge ammount of accounts here
+                    makes tree view imposible to understand 
                     <field name="account_ids"/>
+                     -->
                  </tree>
             </field>
         </record>
 
         <record id="action_account_fstr_category_tree" model="ir.actions.act_window">
             <field name="name">Financial Statement category</field>
+            <field name="type">ir.actions.act_window</field>
             <field name="res_model">account_fstr.category</field>
+            <field name="view_mode">tree</field>
             <field name="view_type">tree</field>
             <field name="view_id" ref="view_account_fstr_category_tree"/>
             <field name="domain">[('parent_id','=',False)]</field>

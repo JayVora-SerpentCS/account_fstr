@@ -17,18 +17,19 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from osv import fields, osv
-from tools.translate import _
-import netsvc
-import time
-import decimal_precision as dp
+from openerp.osv import fields, osv
 
-class account_account(osv.osv):
+
+class account_account(osv.Model):
     _name = "account.account"
     _inherit = "account.account"
 
     _columns = {
-        'category_ids': fields.many2many('account_fstr.category', 'account_fstr_category_account', 'category_id', 'account_id', 'Categories'),
+        'category_ids': fields.many2many(
+            'account_fstr.category',
+            'account_fstr_category_account', 'category_id',
+            'account_id', 'Categories'
+        ),
     }
 
     def test_category_list(self, cr, uid, ids, category_ids, context={}):
@@ -57,7 +58,3 @@ class account_account(osv.osv):
                 'message': "Categories %s already exist for current account" % (", ".join(warning_category_names)),
             })
         return {'value': {'category_ids': category_ids}, 'warning': warning}
-
-account_account()
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

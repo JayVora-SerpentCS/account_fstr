@@ -39,7 +39,7 @@ class account_fstr_report(report_sxw.rml_parse, common_report_header):
         ids = context['active_ids']
         self.localcontext.update({
             'time': time,
-            'template_data':  self._get_template_data(cr, uid, ids, [], self.root_node_obj.id,  context=context),
+            'template_data':  self._get_template_data(cr, uid, ids, [], self.root_node_obj.id, context=context),
             'date_end': '',
         })
 
@@ -64,7 +64,7 @@ class account_fstr_report(report_sxw.rml_parse, common_report_header):
         font_name_title = 'Helvetica'
         font_name_end = 'Helvetica'
 
-        #Category Name - bold/italic
+        # Category Name - bold/italic
         if category_obj.bold_title or category_obj.italic_title:
             font_name_title += '-'
         if category_obj.bold_title:
@@ -72,7 +72,7 @@ class account_fstr_report(report_sxw.rml_parse, common_report_header):
         if category_obj.italic_title:
             font_name_title += 'Oblique'
 
-        #Category End Name - bold/italic
+        # Category End Name - bold/italic
         if category_obj.bold_end or category_obj.italic_end:
             font_name_end += '-'
         if category_obj.bold_end:
@@ -82,12 +82,12 @@ class account_fstr_report(report_sxw.rml_parse, common_report_header):
 
         total_amount = 0
         internal_statements = []
-        
+
         if category_obj.state == 'normal':
             for account_statement_obj in category_obj.account_ids:
                 account_total_amount = account_statement_obj.balance
 
-                #skip iterations where amount = 0 and hide_zero box ticked
+                # skip iterations where amount = 0 and hide_zero box ticked
                 if 'hide_zero' in context:
                     hide_zero = int(context['hide_zero'])
                     if hide_zero == 1 and account_total_amount == 0.0:
@@ -104,7 +104,7 @@ class account_fstr_report(report_sxw.rml_parse, common_report_header):
                     'underline': False,
                     'total_amount': account_total_amount,
                 })
-                total_amount +=  account_total_amount
+                total_amount += account_total_amount
             internal_statements = sorted(internal_statements, key=lambda statement: statement['name'])
 
         elif category_obj.state != 'normal':
@@ -139,6 +139,8 @@ class account_fstr_report(report_sxw.rml_parse, common_report_header):
             })
         return statements_list
 
-report_sxw.report_sxw('report.account_fstr.report', 'account_fstr.category',
-                      'addons/account_fstr/reports/account_fstr_report.rml',
-                      parser=account_fstr_report, header="False")
+report_sxw.report_sxw(
+    'report.account_fstr.report', 'account_fstr.category',
+    'addons/account_fstr/reports/account_fstr_report.rml',
+    parser=account_fstr_report, header="False"
+)

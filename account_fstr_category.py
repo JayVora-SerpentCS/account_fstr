@@ -24,8 +24,10 @@
 from openerp.osv import fields, osv
 import decimal_precision as dp
 from wizard import account_fstr_wizard
+from openerp.tools.translate import _
 
-class account_fstr_category(osv.osv):
+
+class account_fstr_category(osv.Model):
     _name = "account_fstr.category"
     _description = "Financial Statement template category"
     _order = "sequence, id"
@@ -68,10 +70,13 @@ class account_fstr_category(osv.osv):
     _columns = {
         'name': fields.char('Category Title name', size=128, required=True, select=True,),
         'digits_round': fields.integer('Digits round', required=True),
-        'company_id': fields.many2one('res.company', 'Company', ondelete='set null', ),
+        'company_id': fields.many2one('res.company', 'Company', ondelete='set null',),
         'name_end': fields.char('Category End/Total name', size=128,),
         'display_total': fields.boolean('Display End/Total'),
-        'parent_id': fields.many2one('account_fstr.category', 'Parent node', ondelete='cascade', select=True,),
+        'parent_id': fields.many2one(
+            'account_fstr.category', 'Parent node',
+            ondelete='cascade', select=True,
+        ),
         'sequence': fields.integer('Sequence'),
         'consolidate_total': fields.boolean('Consolidate total', help="Selecting Consolidate total will print this category total as a single summed figure and will not list out each individual account"),
         'display_heading': fields.boolean('Display title'),
@@ -83,17 +88,21 @@ class account_fstr_category(osv.osv):
         'underline_end': fields.boolean('Unnderline'),
         'inversed_sign': fields.boolean('Inversed sign'),
         'child_id': fields.one2many('account_fstr.category', 'parent_id', 'Consolidated Children', select=True,),
-        'account_ids': fields.many2many('account.account', 'account_fstr_category_account', 'account_id', 'category_id', 'Accounts', select=True,),
+        'account_ids': fields.many2many(
+            'account.account',
+            'account_fstr_category_account', 'account_id', 'category_id',
+            'Accounts', select=True
+        ),
         'indent_title': fields.integer('Indent Title, (pt)'),
         'indent_end': fields.integer('Indent End, (pt)'),
         'top_spacing_title': fields.integer('Top spacing Title, (pt)'),
         'top_spacing_end': fields.integer('Top spacing End, (pt)'),
         'bottom_spacing_title': fields.integer('Bottom spacing Title, (pt)'),
         'bottom_spacing_end': fields.integer('Bottom spacing End, (pt)'),
-        'state': fields.selection([('view', 'View'),
-                                   ('root', 'Root'),
-                                   ('normal', 'Normal')],
-                                  'Type', select=True,),
+        'state': fields.selection(
+            [('view', 'View'), ('root', 'Root'), ('normal', 'Normal')],
+            'Type', select=True,
+        ),
         'balance': fields.function(__compute, digits_compute=dp.get_precision('Account'), method=True, string='Balance', store=False, type='float'),
         'printable': fields.boolean('Printable', help="Select to allow category to display in print list"),
         'progenitor_id': fields.function(_get_progenitor_id, method=True,
@@ -112,6 +121,23 @@ class account_fstr_category(osv.osv):
         'digits_round': 0,
     }
 
+    def _check_recursion(self, cr, uid, ids, context=None):
+        level = 100
+        while len(ids):
+            cr.execute('select distinct parent_id from account_fstr_category where id IN %s', (tuple(ids),))
+            ids = filter(None, map(lambda x:x[0], cr.fetchall()))
+            if not level:
+                return False
+            level -= 1
+        return True
+
+    _constraints = [
+        (_check_recursion,
+         _('Error ! You cannot create recursive.'),
+         ['parent_id']
+         ),
+    ]
+
     def print_template(self, cr, uid, ids, context={}):
         return account_fstr_wizard.account_fstr_wizard.print_template(cr, uid, ids, context={})
 
@@ -120,7 +146,7 @@ class account_fstr_category(osv.osv):
         result = []
         category_ids = self.search(cr, uid, [('progenitor_id', '=', progenitor_id)], context=context)
         for category_obj in self.browse(cr, uid, category_ids, context=context):
-            if category_obj.id != current_category_id[0]:
+            if category_obj.id != current_category_id:
                 result.extend([category.id for category in category_obj.account_ids])
         return result
 
@@ -139,24 +165,23 @@ class account_fstr_category(osv.osv):
                 warning_account_names.append(account_obj.name)
         if warning_account_names:
             warning.update({
-                'title': 'Alert',
+                'title': _('Alert'),
                 'message': "Accounts %s already exist in current template" % (", ".join(warning_account_names)),
             })
-        return {'value': {'account_ids': current_account_ids,}, 'warning': warning}
+        return {'value': {'account_ids': current_account_ids, }, 'warning': warning}
 
     def view_exception_accounts(self, cr, uid, ids, context={}):
         account_list = self._get_selected_accounts(cr, uid, ids[0], ids, context=context)
+        model_data_pool = self.pool.get('ir.model.data')
+        model_data_ids = model_data_pool.search(cr, uid, [('model', '=', 'ir.ui.view'), ('name', '=', 'view_account_list')], context=context)
+        resource_id = model_data_pool.read(cr, uid, model_data_ids, fields=['res_id'], context=context)[0]['res_id']
         return {
             'name': "Exception Accounts",
-            'view_mode': 'tree,form',
+            'view_mode': 'form',
             'view_type': 'form',
+            'views': [(resource_id, 'tree')],
             'res_model': 'account.account',
             'type': 'ir.actions.act_window',
             'nodestroy': True,
             'domain': [('type', '!=', 'view'), ('id', 'not in', account_list)]
         }
-
-
-account_fstr_category()
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

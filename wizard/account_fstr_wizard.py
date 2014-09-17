@@ -21,27 +21,33 @@
 from openerp.osv import fields, osv
 from openerp.tools.translate import _
 
-class account_fstr_wizard(osv.osv_memory):
+
+class account_fstr_wizard(osv.TransientModel):
 
     _name = 'account_fstr.wizard'
     _description = "Template Print/Preview"
     _columns = {
-        'fiscalyear': fields.many2one('account.fiscalyear', \
-                                    _('Fiscal year'), \
-                                    help=_('Keep empty for all open fiscal years')),
+        'fiscalyear': fields.many2one(
+            'account.fiscalyear', ('Fiscal year'),
+            help=_('Keep empty for all open fiscal years')
+        ),
         'period_from': fields.many2one('account.period', _('Start period')),
         'period_to': fields.many2one('account.period', _('End period')),
-        'target_move': fields.selection([('posted', _('All Posted Entries')),
-                                         ('all', _('All Entries')),
-                                        ], _('Target Moves'), required=True),
-        'root_node': fields.many2one('account_fstr.category', _('Root node'), required=True,),
+        'target_move': fields.selection(
+            [('posted', _('All Posted Entries')),
+             ('all', _('All Entries'))],
+            ('Target Moves'), required=True
+        ),
+        'root_node': fields.many2one(
+            'account_fstr.category', _('Root node'), required=True,
+        ),
         'hide_zero': fields.boolean(_('Hide accounts with a zero balance')),
         'ignore_special': fields.boolean(_('Ignore Special Periods')),
     }
 
     def default_get(self, cr, uid, fields, context={}):
         result = super(osv.osv_memory, self).default_get(cr, uid, fields, context=context)
-        result['root_node']=  context.get('active_id', None)
+        result['root_node'] = context.get('active_id', None)
         return result
 
     def onchange_fiscalyear(self, cr, uid, ids, fiscalyear_id=False, context=None):
@@ -64,7 +70,7 @@ class account_fstr_wizard(osv.osv_memory):
                                AND p.date_start < NOW()
                                ORDER BY p.date_stop DESC
                                LIMIT 1) AS period_stop''', (fiscalyear_id, fiscalyear_id))
-            periods =  [i[0] for i in cr.fetchall()]
+            periods = [i[0] for i in cr.fetchall()]
             if periods and len(periods) > 1:
                 start_period = periods[0]
                 end_period = periods[1]
@@ -72,6 +78,13 @@ class account_fstr_wizard(osv.osv_memory):
         return res
 
     def open_window(self, cr, uid, ids, context=None):
+        """
+        Opens chart of Accounts
+        @param cr: the current row, from the database cursor,
+        @param uid: the current user’s ID for security checks,
+        @param ids: List of account chart’s IDs
+        @return: dictionary of Open account chart window on given fiscalyear and all Entries or posted entries
+        """
         if context is None:
             context = {}
         mod_obj = self.pool.get('ir.model.data')
@@ -97,7 +110,7 @@ class account_fstr_wizard(osv.osv_memory):
                 'res_model': 'account_fstr.category',
                 'type': 'ir.actions.act_window',
                 'tartget': 'new',
-                'context':result['context']
+                'context': result['context']
             }
 
     def print_template(self, cr, uid, ids, context={}):
@@ -113,9 +126,9 @@ class account_fstr_wizard(osv.osv_memory):
             if category.ignore_special:
                 for period in context['periods']:
                     period_rec = period_obj.browse(cr, uid, period)
-                    if period_rec.special == True:
+                    if period_rec.special is True:
                         # this finds the position 'i' in the list to pop
-                        [i for i,x in enumerate(context['periods']) if x == period]
+                        [i for i, x in enumerate(context['periods']) if x == period]
                         context['periods'].pop(i)
             datas['period_from'] = category.period_from.name
             datas['period_to'] = category.period_to.name
@@ -132,7 +145,5 @@ class account_fstr_wizard(osv.osv_memory):
     _defaults = {
         'target_move': 'posted'
     }
-
-account_fstr_wizard()
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

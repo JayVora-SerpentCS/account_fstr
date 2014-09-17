@@ -1,5 +1,6 @@
 import re
 
+
 def groupe_digits(digite, separator=','):
     digite = str(digite)
     if '.' in digite:
