@@ -35,10 +35,7 @@ class account_fstr_report(report_sxw.rml_parse, common_report_header):
 
     def __init__(self, cr, uid, name, context):
         super(account_fstr_report, self).__init__(cr, uid, name, context)
-        category_id = context.get('active_id')
-        if context.get('active_model') == 'account_fstr.wizard':
-            category_id = context.get('account_fstr_root_node')[0]
-        self.root_node_obj = pooler.get_pool(cr.dbname).get('account_fstr.category').browse(cr, uid, category_id, context=context)
+        self.root_node_obj = pooler.get_pool(cr.dbname).get('account_fstr.category').browse(cr, uid, context.get('account_fstr_root_node', context['active_id']), context=context)
         self.category_pool = pooler.get_pool(cr.dbname).get('account_fstr.category')
         ids = context['active_ids']
         self.localcontext.update({
