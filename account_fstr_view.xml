@@ -95,10 +95,9 @@
 		                    </page>
 		
 		                    <page string="Accounts" attrs="{'invisible':[('state','!=','normal')]}">
-		                        <field name="account_ids" domain="[('type', '!=', 'view')]" 
+		                        <field name="account_ids" domain="[('type', '!=', 'view')]" />
 		                        <!-- TODO: Validate accounts when added to report
 		                        on_change="test_account_list(progenitor_id, account_ids)"  -->
-		                         />
 		                    </page>
                         </notebook>
                     </sheet>
