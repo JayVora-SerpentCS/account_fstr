@@ -22,32 +22,30 @@
 ##############################################################################
 
 {
-    'name' : 'Financial Statement Template reporting module',
-    'version' : '1.1',
-    'depends' : [
-                'base',
-                'account',
-                ],
-    'author' : 'Enapps Ltd.',
+    'name': 'Financial Statement Template reporting module',
+    'version': '1.1',
+    'depends': [
+        'base',
+        'account',
+    ],
+    'author': 'Enapps Ltd. & OpenPyme'
     'description': '''This module provides functionality to create customised financial statements.  Examples of a financial statement would be a trial balance, balance sheet, profit and loss, etc.  Any report that is produced by organising sets of accounts can be created using this module.
 
 User documentation can be found here - www.publicus-solutions.com/blog/post1
 
-Compatible with OpenERP v. 6.0 and 6.1
+Compatible with OpenERP v. 7.0
 
 ''',
-    'website' : 'http://www.enapps.co.uk/',
+    'website': 'http://www.openpyme.mx/',
     "category": 'Accounting & Finance',
-    'init_xml' : [],
-    'demo_xml' : [],
-    'update_xml' :  [
-                    'security/ir.model.access.csv',
-                    'account_fstr_wizard_view.xml',
-                    'account_fstr_view.xml',
-                    'account_fstr_menu.xml',
-                    'account_account_view.xml',
-                    ],
-    'active': False,
+    'demo_xml': [],
+    'data':  [
+        'security/ir.model.access.csv',
+        'account_fstr_wizard_view.xml',
+        'account_fstr_view.xml',
+        'account_fstr_menu.xml',
+        'account_account_view.xml',
+    ],
     'installable': True,
-    'images': ['images/fstr_form.png',],
+    'images': ['images/fstr_form.png'],
 }
