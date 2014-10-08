@@ -65,22 +65,34 @@ class account_fstr_report(report_sxw.rml_parse, common_report_header):
         indent = category_obj.indent_title + parent_indent
         font_name_title = 'Helvetica'
         font_name_end = 'Helvetica'
+        decoratation_underline_title = 'none'
+        decoratation_underline_end = 'none'
+        decoration_bold_end = 'none'
+        decoration_bold_title = 'none'
 
-        # Category Name - bold/italic
-        if category_obj.bold_title or category_obj.italic_title:
-            font_name_title += '-'
-        if category_obj.bold_title:
-            font_name_title += 'Bold'
+        # Category Name - italic
         if category_obj.italic_title:
-            font_name_title += 'Oblique'
+            font_name_title = 'italic'
 
-        # Category End Name - bold/italic
-        if category_obj.bold_end or category_obj.italic_end:
-            font_name_end += '-'
-        if category_obj.bold_end:
-            font_name_end += 'Bold'
+        # Category text_decoration -underline
+        if category_obj.underline_title:
+            decoratation_underline_title = 'underline'
+
+        # Category text-bold -bold
+        if category_obj.bold_title:
+            decoration_bold_title = 'bold'
+
+        # Category End Name -italic
         if category_obj.italic_end:
-            font_name_end += 'Oblique'
+            font_name_end = 'italic'
+
+        # Category end text-decoration -underline
+        if category_obj.underline_end:
+            decoratation_underline_end = 'underline'
+
+        # Category end text-bold -bold
+        if category_obj.bold_title:
+            decoration_bold_end = 'bold'
 
         total_amount = 0
         internal_statements = []
@@ -97,6 +109,7 @@ class account_fstr_report(report_sxw.rml_parse, common_report_header):
 
                 if category_obj.inversed_sign:
                     account_total_amount = -account_total_amount
+
                 internal_statements.append({
                     'name': "%s\t%s" % (account_statement_obj.code, account_statement_obj.name,),
                     'indent': indent + 10,
@@ -105,6 +118,9 @@ class account_fstr_report(report_sxw.rml_parse, common_report_header):
                     'font_name': 'Helvetica',
                     'underline': False,
                     'total_amount': account_total_amount,
+                    'decoration': 'none',
+                    'decoration_bold': 'none',
+                    'padding': 2,
                 })
                 total_amount += account_total_amount
             internal_statements = sorted(internal_statements, key=lambda statement: statement['name'])
@@ -124,7 +140,10 @@ class account_fstr_report(report_sxw.rml_parse, common_report_header):
                 'bottom_spacing': category_obj.bottom_spacing_title,
                 'font_name': font_name_title,
                 'underline': category_obj.underline_title,
-                'total_amount': total_amount if category_obj.consolidate_total else ' ',
+                'total_amount': total_amount if category_obj.consolidate_total else 0,
+                'decoration': decoratation_underline_title,
+                'decoration_bold': decoration_bold_title,
+                'padding': 2,
             })
         if not category_obj.consolidate_total:
             statements_list.extend(internal_statements)
@@ -138,11 +157,15 @@ class account_fstr_report(report_sxw.rml_parse, common_report_header):
                 'font_name': font_name_end,
                 'underline': category_obj.underline_end,
                 'total_amount': total_amount,
+                'decoration': decoratation_underline_end,
+                'decoration_bold': decoration_bold_end,
+                'padding': 10,
             })
         return statements_list
 
 report_sxw.report_sxw(
-    'report.account_fstr.report', 'account_fstr.category',
-    'addons/account_fstr/reports/account_fstr_report.rml',
+    'report.account_financial_report.report',
+    'account_fstr.category',
+    'account_financial_report_engine/reports/account_financial_report_engine.mako',
     parser=account_fstr_report, header="False"
 )

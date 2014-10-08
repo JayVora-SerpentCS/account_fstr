@@ -36,8 +36,5 @@
             <field name="res_model">account_fstr.wizard</field>
             <field name="target">new</field>
         </record>
-
-        <report id="account_fstr_report" string="Print Template" model="account_fstr.category" name="account_fstr.report" rml="account_fstr/reports/account_fstr_report.rml"/>
-
     </data>
 </openerp>
