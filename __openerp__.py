@@ -27,24 +27,26 @@
     'depends': [
         'base',
         'account',
+        'report_webkit',
     ],
-    'author': 'Enapps Ltd. & OpenPyme'
-    'description': '''This module provides functionality to create customised financial statements.  Examples of a financial statement would be a trial balance, balance sheet, profit and loss, etc.  Any report that is produced by organising sets of accounts can be created using this module.
+    'author': 'Enapps Ltd. & OpenPyme',
+    'description': """This module provides functionality to create customised financial statements.  Examples of a financial statement would be a trial balance, balance sheet, profit and loss, etc.  Any report that is produced by organising sets of accounts can be created using this module.
 
 User documentation can be found here - www.publicus-solutions.com/blog/post1
 
 Compatible with OpenERP v. 7.0
 
-''',
+""",
     'website': 'http://www.openpyme.mx/',
     "category": 'Accounting & Finance',
-    'demo_xml': [],
     'data':  [
         'security/ir.model.access.csv',
         'account_fstr_wizard_view.xml',
         'account_fstr_view.xml',
         'account_fstr_menu.xml',
         'account_account_view.xml',
+        'data/account_financial_report.xml',
+        'data/data.xml',
     ],
     'installable': True,
     'images': ['images/fstr_form.png'],

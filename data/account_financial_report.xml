@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <report
+            auto="False"
+            id="report_account_financial"
+            model="account_fstr.category"
+            name="account_financial_report.report"
+            file="account_financial_report_engine/reports/account_financial_report_engine.mako"
+            string="Financial report"
+            report_type="webkit"
+            header="False"
+            webkit_header="report_account_financial"
+            />
+    </data>
+</openerp>

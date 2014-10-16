@@ -110,7 +110,7 @@
             <font face="Helvetica">[[ repeatIn(template_data['statements'][0], 'o') ]]</font>
           </para>
           <para style="P5l">
-              [[ setTag('para', 'para', {'spaceBefore': "%s" % (o['top_spacing'],), 'leftIndent': "%s" % (o['indent'],), 'fontName': o['font_name'],}) ]]
+              [[ setTag('para', 'para', {'spaceBefore': "%s" % (o['top_spacing'],), 'leftIndent': "%s" % (o['indent_title'],), 'fontName': o['font_name'],}) ]]
               <u>[[ not (o['underline']) and (setTag('u', 'font', {})) ]] [[ o['name'] ]]</u>
           </para>
           <para style="P5l">

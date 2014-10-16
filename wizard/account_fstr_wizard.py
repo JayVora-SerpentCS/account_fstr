@@ -137,7 +137,7 @@ class account_fstr_wizard(osv.TransientModel):
             context['hide_zero'] = category.hide_zero
         return {
             'type': 'ir.actions.report.xml',
-            'report_name': 'account_fstr.report',
+            'report_name': 'account_financial_report.report',
             'datas': datas,
             'context': context,
         }

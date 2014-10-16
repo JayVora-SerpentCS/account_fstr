@@ -1,0 +1,109 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data noupdate="1">
+        <record id="report_account_financial" model="ir.header_webkit">
+        <field name="name">Financial Report</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">5</field>
+        <field name="margin_bottom">10</field>
+        <field name="format">Letter</field>
+        <field name="css" ><![CDATA[
+
+
+body {
+   font-family: Arial;
+   font-size: 15px;            
+}
+
+h1 {
+   font-family: Helvetica;
+   font-size: 28px;
+   text-align: center; 
+}
+           
+.act_as_cell {
+   display: table-cell;
+   word-wrap:break-word;            
+}
+
+.act_as_row {
+   display: table-row; 
+   word-wrap:break-word;
+   width: 100%;           
+}
+
+.act_as_table {
+   display: table;
+   width:100%;
+   word-wrap:break-word;         
+}
+
+#contenedor {
+   padding-bottom: 10px;
+   padding-left: 10px;
+   padding-right: 10px;           
+}
+
+]]>
+
+    </field>
+    <field name="html"><![CDATA[
+    
+<html>
+    <head>
+        <meta content="text/html; charset=UTF-8" http-equiv="content-type"/>
+            <script>
+                 function subst() {
+                 var vars = {};
+                 var x = document.location.search.substring(1).split('&');
+                 for (var i in x) { var z = x[i].split('=', 2); vars[z[0]] = unescape(z[1]); }
+                 var x = ['frompage', 'topage', 'page', 'webpage', 'section', 'subsection', 'subsubsection'];
+                 for (var i in x) {
+                 var y = document.getElementsByClassName(x[i]);
+                 for (var j = 0; j < y.length; ++j) y[j].textContent = vars[x[i]];
+                     }
+                 }
+            </script>
+    </head>
+    <body style="border:0; margin: 0;" onload="subst()">
+        <% setLang(lang) %>
+        <table style="border-bottom: 1px solid black; width: 100%">
+            <tr>
+                <td style="text-align:left;font-size:9;font-weight: bold;">
+                    ${company.partner_id.name |entity}
+                </td>
+                <td style="text-align:right;font-size:9;">
+                    ${ formatLang(time.strftime("%Y-%m-%d"), date=True) }&nbsp;&nbsp;${ time.strftime("%H:%M") }&nbsp;&nbsp;-&nbsp;&nbsp;p. <span class="page">1</span> / <span class="topage">1</span>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>          
+]]>
+    </field>
+    <field name="footer_html"><![CDATA[
+
+<html>
+    <head>
+        <meta content="text/html; charset=UTF-8" http-equiv="content-type"/>
+            <script>
+                function subst() {
+                    var vars = {};
+                    var x = document.location.search.substring(1).split('&');
+                    for (var i in x) { var z = x[i].split('=', 2); vars[z[0]] = unescape(z[1]); }
+                    var x = ['frompage', 'topage', 'page', 'webpage', 'section', 'subsection', 'subsubsection'];
+                    for (var i in x) {
+                    var y = document.getElementsByClassName(x[i]);
+                    for (var j = 0; j < y.length; ++j) y[j].textContent = vars[x[i]];
+                        }
+                    }
+            </script>
+    </head>
+    <body>
+    </body>
+</html>
+]]>
+    </field>
+    </record>
+    </data>
+    </openerp>
