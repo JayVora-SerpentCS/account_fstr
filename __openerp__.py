@@ -41,6 +41,7 @@ Compatible with OpenERP v. 7.0
     "category": 'Accounting & Finance',
     'data':  [
         'security/ir.model.access.csv',
+        'security/account_fstr_security.xml',
         'account_fstr_wizard_view.xml',
         'account_fstr_view.xml',
         'account_fstr_menu.xml',
