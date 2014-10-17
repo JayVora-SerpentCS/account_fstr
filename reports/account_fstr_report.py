@@ -121,6 +121,8 @@ class account_fstr_report(report_sxw.rml_parse, common_report_header):
                     'decoration': 'none',
                     'decoration_bold': 'none',
                     'padding': 2,
+                    'category_title': 'true',
+                    'background': '#FFFFFF',
                 })
                 total_amount += account_total_amount
             internal_statements = sorted(internal_statements, key=lambda statement: statement['name'])
@@ -144,6 +146,8 @@ class account_fstr_report(report_sxw.rml_parse, common_report_header):
                 'decoration': decoratation_underline_title,
                 'decoration_bold': decoration_bold_title,
                 'padding': 2,
+                'category_title': 'false',
+                'background': '#F0F0F0',
             })
         if not category_obj.consolidate_total:
             statements_list.extend(internal_statements)
@@ -160,6 +164,8 @@ class account_fstr_report(report_sxw.rml_parse, common_report_header):
                 'decoration': decoratation_underline_end,
                 'decoration_bold': decoration_bold_end,
                 'padding': 10,
+                'category_title': 'true',
+                'background': '#FFFFFF',
             })
         return statements_list
 
@@ -167,5 +173,5 @@ report_sxw.report_sxw(
     'report.account_financial_report.report',
     'account_fstr.category',
     'account_financial_report_engine/reports/account_financial_report_engine.mako',
-    parser=account_fstr_report, header="False"
+    parser=account_fstr_report
 )

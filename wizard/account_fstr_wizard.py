@@ -133,6 +133,7 @@ class account_fstr_wizard(osv.TransientModel):
             datas['period_from'] = category.period_from.name
             datas['period_to'] = category.period_to.name
             datas['fiscalyear'] = category.fiscalyear.name
+            datas['state'] = category.target_move
             context['account_fstr_root_node'] = category.root_node.id
             context['hide_zero'] = category.hide_zero
         return {
