@@ -170,7 +170,7 @@ class account_fstr_report(report_sxw.rml_parse, common_report_header):
         return statements_list
 
 report_sxw.report_sxw(
-    'report.account_financial_report.report',
+    'report.account.account_report_financial',
     'account_fstr.category',
     'account_financial_report_engine/reports/account_financial_report_engine.mako',
     parser=account_fstr_report
