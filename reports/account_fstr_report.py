@@ -23,11 +23,9 @@ import time
 from openerp.report import report_sxw
 from openerp import pooler
 from account.report.common_report_header import common_report_header
-from sm_kit import groupe_digits
 
 
 class account_fstr_report(report_sxw.rml_parse, common_report_header):
-
     _name = 'account_fstr.category.report'
 
     date_end = None
@@ -40,7 +38,9 @@ class account_fstr_report(report_sxw.rml_parse, common_report_header):
         ids = context['active_ids']
         self.localcontext.update({
             'time': time,
-            'template_data':  self._get_template_data(cr, uid, ids, [], self.root_node_obj.id, context=context),
+            'template_data':  self._get_template_data(
+                cr, uid, ids, [], self.root_node_obj.id, context=context
+            ),
             'date_end': '',
         })
 
@@ -60,8 +60,12 @@ class account_fstr_report(report_sxw.rml_parse, common_report_header):
             'lang': context['lang'],
         }
 
-
-    def _get_statement(self, cr, uid, ids, statements_list, category_obj, parent_indent, context={}):
+    def _get_statement(
+        self, cr, uid, ids, statements_list, category_obj,
+        parent_indent, context=None
+    ):
+        if context is None:
+            context = {}
         indent = category_obj.indent_title + parent_indent
         font_name_title = 'Helvetica'
         font_name_end = 'Helvetica'
@@ -111,7 +115,8 @@ class account_fstr_report(report_sxw.rml_parse, common_report_header):
                     account_total_amount = -account_total_amount
 
                 internal_statements.append({
-                    'name': "%s\t%s" % (account_statement_obj.code, account_statement_obj.name,),
+                    'name': "%s\t%s" % (account_statement_obj.code,
+                                        account_statement_obj.name),
                     'indent': indent + 10,
                     'top_spacing': None,
                     'bottom_spacing': None,
@@ -125,11 +130,16 @@ class account_fstr_report(report_sxw.rml_parse, common_report_header):
                     'background': '#FFFFFF',
                 })
                 total_amount += account_total_amount
-            internal_statements = sorted(internal_statements, key=lambda statement: statement['name'])
+            internal_statements = sorted(
+                internal_statements, key=lambda statement: statement['name']
+            )
 
         elif category_obj.state != 'normal':
             for child_category in sorted(category_obj.child_id, key=lambda child_obj: child_obj.sequence):
-                internal_statements = self._get_statement(cr, uid, ids, internal_statements, child_category, indent, context=context)
+                internal_statements = self._get_statement(
+                    cr, uid, ids, internal_statements, child_category, indent,
+                    context=context
+                )
             total_amount = category_obj.balance
             if category_obj.inversed_sign:
                 total_amount = -total_amount
@@ -149,7 +159,10 @@ class account_fstr_report(report_sxw.rml_parse, common_report_header):
                 'category_title': 'false',
                 'background': '#F0F0F0',
             })
-        if not category_obj.consolidate_total:
+        if (
+            not category_obj.consolidate_total
+            or category_obj.id == self.root_node_obj.id
+        ):
             statements_list.extend(internal_statements)
         # Category End Name
         if category_obj.display_total:
@@ -170,7 +183,7 @@ class account_fstr_report(report_sxw.rml_parse, common_report_header):
         return statements_list
 
 report_sxw.report_sxw(
-    'report.account.account_report_financial',
+    'report.account_financial_report.report',
     'account_fstr.category',
     'account_financial_report_engine/reports/account_financial_report_engine.mako',
     parser=account_fstr_report

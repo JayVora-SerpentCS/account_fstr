@@ -15,7 +15,7 @@
                         <field name="period_from" widget="selection"/>
                         <field name="period_to" widget="selection"/>
                         <separator colspan="4"/>
-                        <field name="root_node" domain="['&', ('printable','=','1'), ('company_id', '=', user.company_id.id)]"/>
+                        <field name="root_node" domain="[('printable','=','1')]"/>
                         <field name="hide_zero"/>
                         <field name="ignore_special"/>
                     </group>

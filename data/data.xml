@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <openerp>
     <data noupdate="1">
-        <record id="report_account_financial" model="ir.header_webkit">
+      <record id="report_account_financial" model="ir.header_webkit">
         <field name="name">Financial Report</field>
         <field name="orientation">Portrait</field>
         <field name="margin_top">5</field>
@@ -89,7 +89,7 @@ div {
 ]]>
 
     </field>
-    <field name="html"><![CDATA[
+        <field name="html"><![CDATA[
     
 <html>
     <head>
@@ -119,7 +119,7 @@ div {
 </html>         
 ]]>
     </field>
-    <field name="footer_html"><![CDATA[
+        <field name="footer_html"><![CDATA[
 
 <html>
     <head>
@@ -151,6 +151,6 @@ div {
 </html>
 ]]>
         </field>
-    </record>
-  </data>
+      </record>
+    </data>
 </openerp>
