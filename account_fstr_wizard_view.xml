@@ -8,12 +8,14 @@
             <field name="arch" type="xml">
                 <form string="Account charts" version="7.0">
                     <group colspan="4">
-                        <field name="fiscalyear" on_change="onchange_fiscalyear(fiscalyear)" widget="selection"/>
+                        <field name="chart_account_id" widget='selection' on_change="onchange_chart_id(chart_account_id, context)"/>
+                        <field name="company_id" invisible="1"/>
+                        <field name="fiscalyear" on_change="onchange_fiscalyear(fiscalyear)" widget="selection"  domain="[('company_id','=',company_id)]"/>
                         <field name="target_move"/>
                         <label align="0.7" colspan="4" string="(If you do not select Fiscal year it will take all open fiscal years)"/>
                         <separator string="Periods" colspan="4"/>
-                        <field name="period_from" widget="selection"/>
-                        <field name="period_to" widget="selection"/>
+                        <field name="period_from" widget="selection" domain="[('fiscalyear_id', '=', fiscalyear_id)]"/>
+                        <field name="period_to" widget="selection" domain="[('fiscalyear_id', '=', fiscalyear_id)]"/>
                         <separator colspan="4"/>
                         <field name="root_node" domain="[('printable','=','1')]"/>
                         <field name="hide_zero"/>
@@ -29,7 +31,7 @@
         </record>
 
         <record id="action_account_fstr_wizard" model="ir.actions.act_window">
-            <field name="name">Temlate Print/Preview</field>
+            <field name="name">Template Print/Preview</field>
             <field name="view_id" ref="view_account_fstr_wizard_form"/>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>

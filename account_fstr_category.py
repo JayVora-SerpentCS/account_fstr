@@ -32,28 +32,35 @@ class account_fstr_category(osv.Model):
     _description = "Financial Statement template category"
     _order = "sequence, id"
 
-
-    def __compute(self, cr, uid, ids, field_names, arg=None, context=None,
-                  query='', query_params=()):
+    def __compute(
+        self, cr, uid, ids, field_names, arg=None, context=None,
+        query='', query_params=()
+    ):
         res = {}
-        for category_obj in  self.browse(cr, uid, ids, context=context):
-            res.update({category_obj.id: self.__compute_balance_for_caregory(cr, uid, category_obj, context=context)})
+        for category_obj in self.browse(cr, uid, ids, context=context):
+            res.update(
+                {category_obj.id: self.__compute_balance_for_caregory(cr, uid, category_obj, context=context)}
+            )
         return res
 
-    def __compute_balance_for_caregory(self, cr, uid, category_obj, context={}):
+    def __compute_balance_for_caregory(self, cr, uid, category_obj, context=None):
         result = 0
         if category_obj.state == 'normal':
             for account_obj in category_obj.account_ids:
                 result += account_obj.balance
         else:
             for child_category_obj in category_obj.child_id:
-                result += self.__compute_balance_for_caregory(cr, uid, child_category_obj, context=context)
+                result += self.__compute_balance_for_caregory(
+                    cr, uid, child_category_obj, context=context
+                )
         return result
 
-    def _get_progenitor_id(self, cr, uid, ids, field_names, arg=None, context={}):
+    def _get_progenitor_id(self, cr, uid, ids, field_names, arg=None, context=None):
         res = {}
         for category_obj in self.browse(cr, uid, ids, context=context):
-            res.update({category_obj.id: self._get_progenitor_id_in_recurse(cr, uid, category_obj, context=context) })
+            res.update(
+                {category_obj.id: self._get_progenitor_id_in_recurse(cr, uid, category_obj, context=context)}
+            )
         return res
 
     def _get_progenitor_id_in_recurse(self, cr, uid, category_obj, context={}):
@@ -68,9 +75,13 @@ class account_fstr_category(osv.Model):
         return self.search(cr, uid, [('id', 'child_of', ids)], context=context)
 
     _columns = {
-        'name': fields.char('Category Title name', size=128, required=True, select=True,),
+        'name': fields.char(
+            'Category Title name', size=128, required=True, select=True,
+        ),
         'digits_round': fields.integer('Digits round', required=True),
-        'company_id': fields.many2one('res.company', 'Company', ondelete='set null',),
+        'company_id': fields.many2one(
+            'res.company', 'Company', ondelete='set null',
+        ),
         'name_end': fields.char('Category End/Total name', size=128,),
         'display_total': fields.boolean('Display End/Total'),
         'parent_id': fields.many2one(
@@ -78,7 +89,12 @@ class account_fstr_category(osv.Model):
             ondelete='cascade', select=True,
         ),
         'sequence': fields.integer('Sequence'),
-        'consolidate_total': fields.boolean('Consolidate total', help="Selecting Consolidate total will print this category total as a single summed figure and will not list out each individual account"),
+        'consolidate_total': fields.boolean(
+            'Consolidate total',
+            help="Selecting Consolidate total will print this category total "
+            "as a single summed figure and will not list out each individual "
+            "account"
+        ),
         'display_heading': fields.boolean('Display title'),
         'bold_title': fields.boolean('Bold'),
         'italic_title': fields.boolean('Italic'),
@@ -87,7 +103,10 @@ class account_fstr_category(osv.Model):
         'italic_end': fields.boolean('Italic'),
         'underline_end': fields.boolean('Unnderline'),
         'inversed_sign': fields.boolean('Inversed sign'),
-        'child_id': fields.one2many('account_fstr.category', 'parent_id', 'Consolidated Children', select=True,),
+        'child_id': fields.one2many(
+            'account_fstr.category', 'parent_id',
+            'Consolidated Children', select=True,
+        ),
         'account_ids': fields.many2many(
             'account.account',
             'account_fstr_category_account', 'account_id', 'category_id',
@@ -103,15 +122,29 @@ class account_fstr_category(osv.Model):
             [('view', 'View'), ('root', 'Root'), ('normal', 'Normal')],
             'Type', select=True,
         ),
-        'balance': fields.function(__compute, digits_compute=dp.get_precision('Account'), method=True, string='Balance', store=False, type='float'),
-        'printable': fields.boolean('Printable', help="Select to allow category to display in print list"),
-        'progenitor_id': fields.function(_get_progenitor_id, method=True,
-                                         string='Root', type='many2one',
-                                         obj='account_fstr.category',
-                                         store={ 'account_fstr.category': (_get_childs, ['parent_id'], 1)}, select=True,),
-
-
+        'balance': fields.function(
+            __compute, digits_compute=dp.get_precision('Account'),
+            method=True, string='Balance', store=False, type='float'
+        ),
+        'printable': fields.boolean(
+            'Printable',
+            help="Select to allow category to display in print list"
+        ),
+        'progenitor_id': fields.function(
+            _get_progenitor_id, method=True, string='Root', type='many2one',
+            obj='account_fstr.category',
+            store={'account_fstr.category': (_get_childs, ['parent_id'], 1)},
+            select=True,
+        ),
     }
+
+    def _get_company(self, cr, uid, context=None):
+        """
+        Get default company for this object
+        """
+        return self.pool.get('res.company')._company_default_get(
+            cr, uid, 'account_fstr.category', context=context
+        ),
 
     _defaults = {
         'state': 'normal',
@@ -119,6 +152,7 @@ class account_fstr_category(osv.Model):
         'indent_end': 10,
         'top_spacing_title': 0,
         'digits_round': 0,
+        'company_id': _get_company,
     }
 
     def _check_recursion(self, cr, uid, ids, context=None):
@@ -138,11 +172,14 @@ class account_fstr_category(osv.Model):
          ),
     ]
 
-    def print_template(self, cr, uid, ids, context={}):
-        return account_fstr_wizard.account_fstr_wizard.print_template(cr, uid, ids, context={})
+    def print_template(self, cr, uid, ids, context=None):
+        return account_fstr_wizard.account_fstr_wizard.print_template(
+            cr, uid, ids, context={}
+        )
 
-
-    def _get_selected_accounts(self, cr, uid, progenitor_id, current_category_id, context={}):
+    def _get_selected_accounts(
+        self, cr, uid, progenitor_id, current_category_id, context=None
+    ):
         result = []
         category_ids = self.search(cr, uid, [('progenitor_id', '=', progenitor_id)], context=context)
         for category_obj in self.browse(cr, uid, category_ids, context=context):

@@ -18,15 +18,27 @@
 #
 ##############################################################################
 
+import time
 from openerp.osv import fields, osv
 from openerp.tools.translate import _
 
 
 class account_fstr_wizard(osv.TransientModel):
-
+    """
+    Wizard to create financial reports
+    """
     _name = 'account_fstr.wizard'
     _description = "Template Print/Preview"
     _columns = {
+        'chart_account_id': fields.many2one(
+            'account.account', 'Chart of Account',
+            help='Select Charts of Accounts',
+            required=True, domain=[('parent_id', '=', False)]
+        ),
+        'company_id': fields.related(
+            'chart_account_id', 'company_id', type='many2one',
+            relation='res.company', string='Company', readonly=True
+        ),
         'fiscalyear': fields.many2one(
             'account.fiscalyear', ('Fiscal year'),
             help=_('Keep empty for all open fiscal years')
@@ -45,8 +57,84 @@ class account_fstr_wizard(osv.TransientModel):
         'ignore_special': fields.boolean(_('Ignore Special Periods')),
     }
 
-    def default_get(self, cr, uid, fields, context={}):
-        result = super(osv.osv_memory, self).default_get(cr, uid, fields, context=context)
+    def _get_company(self, cr, uid, context=None):
+        """
+        Get default company for this object
+        """
+        return self.pool.get('res.company')._company_default_get(
+            cr, uid, 'account_fstr.category', context=context
+        ),
+
+    def _get_account(self, cr, uid, context=None):
+        user = self.pool.get('res.users').browse(cr, uid, uid, context=context)
+        accounts = self.pool.get('account.account').search(
+            cr, uid,
+            [('parent_id', '=', False), ('company_id', '=', user.company_id.id)],
+            limit=1
+        )
+        return accounts and accounts[0] or False
+
+    def _get_fiscalyear(self, cr, uid, context=None):
+        if context is None:
+            context = {}
+        now = time.strftime('%Y-%m-%d')
+        company_id = False
+        ids = context.get('active_ids', [])
+        if ids and context.get('active_model') == 'account.account':
+            company_id = self.pool.get('account.account').browse(
+                cr, uid, ids[0], context=context
+            ).company_id.id
+        else:  # use current company id
+            company_id = self.pool.get('res.users').browse(
+                cr, uid, uid, context=context
+            ).company_id.id
+        domain = [
+            ('company_id', '=', company_id),
+            ('date_start', '<', now),
+            ('date_stop', '>', now)
+        ]
+        fiscalyears = self.pool.get('account.fiscalyear').search(
+            cr, uid, domain, limit=1
+        )
+        return fiscalyears and fiscalyears[0] or False
+
+    _defaults = {
+        'fiscalyear_id': _get_fiscalyear,
+        'company_id': _get_company,
+        'chart_account_id': _get_account,
+        'target_move': 'posted'
+    }
+
+    def onchange_chart_id(
+        self, cr, uid, ids, chart_account_id=False, context=None
+    ):
+        """
+        Update fiscal year available values after update chart selection
+        """
+        res = {}
+        if chart_account_id:
+            company_id = self.pool.get('account.account').browse(
+                cr, uid, chart_account_id, context=context
+            ).company_id.id
+            now = time.strftime('%Y-%m-%d')
+            domain = [
+                ('company_id', '=', company_id),
+                ('date_start', '<', now),
+                ('date_stop', '>', now)
+            ]
+            fiscalyears = self.pool.get('account.fiscalyear').search(
+                cr, uid, domain, limit=1
+            )
+            res['value'] = {
+                'company_id': company_id,
+                'fiscalyear_id': fiscalyears and fiscalyears[0] or False
+            }
+        return res
+
+    def default_get(self, cr, uid, fields, context=None):
+        result = super(osv.TransientModel, self).default_get(
+            cr, uid, fields, context=context
+        )
         result['root_node'] = context.get('active_id', None)
         return result
 
@@ -142,9 +230,3 @@ class account_fstr_wizard(osv.TransientModel):
             'datas': datas,
             'context': context,
         }
-
-    _defaults = {
-        'target_move': 'posted'
-    }
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
