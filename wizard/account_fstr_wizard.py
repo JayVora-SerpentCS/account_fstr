@@ -99,7 +99,7 @@ class account_fstr_wizard(osv.TransientModel):
         return fiscalyears and fiscalyears[0] or False
 
     _defaults = {
-        'fiscalyear_id': _get_fiscalyear,
+        'fiscalyear': _get_fiscalyear,
         'company_id': _get_company,
         'chart_account_id': _get_account,
         'target_move': 'posted'

@@ -14,8 +14,8 @@
                         <field name="target_move"/>
                         <label align="0.7" colspan="4" string="(If you do not select Fiscal year it will take all open fiscal years)"/>
                         <separator string="Periods" colspan="4"/>
-                        <field name="period_from" widget="selection" domain="[('fiscalyear_id', '=', fiscalyear_id)]"/>
-                        <field name="period_to" widget="selection" domain="[('fiscalyear_id', '=', fiscalyear_id)]"/>
+                        <field name="period_from" widget="selection" domain="[('fiscalyear_id', '=', fiscalyear)]"/>
+                        <field name="period_to" widget="selection" domain="[('fiscalyear_id', '=', fiscalyear)]"/>
                         <separator colspan="4"/>
                         <field name="root_node" domain="[('printable','=','1')]"/>
                         <field name="hide_zero"/>
